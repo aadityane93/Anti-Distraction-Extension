@@ -28,19 +28,37 @@ function replaceWithImage(videoElement) {
   const imageElement = document.createElement('img');
   imageElement.src = chrome.runtime.getURL('images/study_harder.png'); // Assumes you have an image at this path
   imageElement.alt = "Study Harder";
+
+  // Apply styles to match the size of a normal YouTube video thumbnail
   imageElement.style.width = '100%';
   imageElement.style.height = 'auto';
+  imageElement.style.objectFit = 'cover'; // Ensures the image covers the area
 
-  videoElement.innerHTML = '';
-  videoElement.appendChild(imageElement);
+  const thumbnailElement = videoElement.querySelector('#thumbnail');
+  if (thumbnailElement) {
+    thumbnailElement.innerHTML = ''; // Clear existing content
+    thumbnailElement.appendChild(imageElement); // Add the new image
+  }
+
+  const titleElement = videoElement.querySelector('#video-title');
+  if (titleElement) {
+    titleElement.textContent = 'Study Harder';
+  }
+}
+
+// Observe changes to the DOM and apply the filter to new elements
+function observeDOMChanges() {
+  const observer = new MutationObserver(hideBlockedVideos);
+  observer.observe(document.body, { childList: true, subtree: true });
 }
 
 window.addEventListener('yt-page-data-updated', () => {
   checkCurrentVideo();
   hideBlockedVideos();
+  observeDOMChanges();
 });
 document.addEventListener('DOMContentLoaded', () => {
   checkCurrentVideo();
   hideBlockedVideos();
+  observeDOMChanges();
 });
-
