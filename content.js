@@ -17,11 +17,22 @@ function hideBlockedVideos() {
     if (videoId) {
       chrome.runtime.sendMessage({ type: 'CHECK_VIDEO', videoId }, response => {
         if (response && response.isBlocked) {
-          videoElement.style.display = 'none';
+          replaceWithImage(videoElement);
         }
       });
     }
   });
+}
+
+function replaceWithImage(videoElement) {
+  const imageElement = document.createElement('img');
+  imageElement.src = chrome.runtime.getURL('images/study_harder.png'); // Assumes you have an image at this path
+  imageElement.alt = "Study Harder";
+  imageElement.style.width = '100%';
+  imageElement.style.height = 'auto';
+
+  videoElement.innerHTML = '';
+  videoElement.appendChild(imageElement);
 }
 
 window.addEventListener('yt-page-data-updated', () => {
@@ -32,3 +43,4 @@ document.addEventListener('DOMContentLoaded', () => {
   checkCurrentVideo();
   hideBlockedVideos();
 });
+

@@ -7,7 +7,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     fetchVideoDetails(message.videoId).then(isBlocked => {
       sendResponse({ isBlocked });
     });
-    return true;
+    return true; // Will respond asynchronously
   }
 });
 
@@ -33,6 +33,8 @@ function isBlockedCategory(categoryId) {
   const blockedCategories = ["10", "20", "22", "23", "24", "26"]; // Example categories: "10" for Music, "20" for Gaming, "22" for Vlogs, etc.
   return blockedCategories.includes(categoryId);
 }
+
+
 
   
 
