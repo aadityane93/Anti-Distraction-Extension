@@ -10,8 +10,7 @@ function checkCurrentVideo() {
   }
 }
 
-function hideBlockedVideos() {
-  const videoElements = document.querySelectorAll('ytd-rich-item-renderer, ytd-grid-video-renderer, ytd-video-renderer');
+function hideBlockedVideos(videoElements) {
   videoElements.forEach(videoElement => {
     const videoId = videoElement.querySelector('a#thumbnail')?.href.split('v=')[1];
     if (videoId) {
@@ -48,17 +47,38 @@ function replaceWithImage(videoElement) {
 
 // Observe changes to the DOM and apply the filter to new elements
 function observeDOMChanges() {
-  const observer = new MutationObserver(hideBlockedVideos);
+  const observer = new MutationObserver(mutations => {
+    mutations.forEach(mutation => {
+      mutation.addedNodes.forEach(node => {
+        if (node.nodeType === Node.ELEMENT_NODE &&
+            (node.matches('ytd-rich-item-renderer') ||
+             node.matches('ytd-grid-video-renderer') ||
+             node.matches('ytd-video-renderer'))) {
+          hideBlockedVideos([node]);
+        }
+      });
+    });
+  });
+
   observer.observe(document.body, { childList: true, subtree: true });
 }
 
 window.addEventListener('yt-page-data-updated', () => {
-  checkCurrentVideo();
-  hideBlockedVideos();
-  observeDOMChanges();
+  try {
+    checkCurrentVideo();
+    hideBlockedVideos(document.querySelectorAll('ytd-rich-item-renderer, ytd-grid-video-renderer, ytd-video-renderer'));
+    observeDOMChanges();
+  } catch (error) {
+    console.error('Error during yt-page-data-updated event:', error);
+  }
 });
+
 document.addEventListener('DOMContentLoaded', () => {
-  checkCurrentVideo();
-  hideBlockedVideos();
-  observeDOMChanges();
+  try {
+    checkCurrentVideo();
+    hideBlockedVideos(document.querySelectorAll('ytd-rich-item-renderer, ytd-grid-video-renderer, ytd-video-renderer'));
+    observeDOMChanges();
+  } catch (error) {
+    console.error('Error during DOMContentLoaded event:', error);
+  }
 });
