@@ -1,5 +1,5 @@
 const blockedKeywords = ["music", "vlog", "comedy", "meme", "song", "skit"];
-const apiKey = 'AIzaSyC8uRDEwr-GwZnb8eglquOoTHXKJd3xk7Y'; // Replace with your actual YouTube API key
+const apiKey = ''; 
 
 function checkCurrentVideo() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -108,7 +108,6 @@ function replaceWithImage(videoElement) {
   imageElement.src = chrome.runtime.getURL('images/study_harder.png');
   imageElement.alt = "Study Harder";
 
-  // Apply styles to match the size of a normal YouTube video thumbnail
   imageElement.style.width = '100%';
   imageElement.style.height = 'auto';
   imageElement.style.objectFit = 'cover';
